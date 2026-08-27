@@ -86,13 +86,24 @@ def groq_client():
 def require_aws_credentials() -> None:
     import boto3
 
-    creds = boto3.Session().get_credentials()
-    if creds is None or not creds.access_key:
+    try:
+        creds = boto3.Session().get_credentials()
+        has_creds = creds is not None and bool(creds.access_key)
+    except Exception:  # noqa: BLE001 -- e.g. botocore.exceptions.ProfileNotFound if
+        # AWS_PROFILE in .env points at a profile that doesn't exist on this
+        # machine. boto3.Session() can raise here, not just return None, so
+        # this must be a try/except and not a plain None-check -- an AWS
+        # config problem should fall back the same way a missing key does,
+        # not crash the caller (data_pipeline/build_embeddings.py's Bedrock
+        # -> TF-IDF fallback depends on this raising cleanly).
+        has_creds = False
+    if not has_creds:
         raise RuntimeError(
             "No AWS credentials found.\n\n"
             "  Fix with ONE of:\n"
             "    export AWS_ACCESS_KEY_ID=...  AWS_SECRET_ACCESS_KEY=...\n"
-            "    aws sso login --profile <your-profile>\n\n"
+            "    aws sso login --profile <your-profile>\n"
+            "    remove/comment out AWS_PROFILE in .env if it points at a profile you don't have\n\n"
             f"  Region currently resolves to: {REGION}\n"
             "  Set it with: export AWS_DEFAULT_REGION=ap-southeast-1\n"
         )

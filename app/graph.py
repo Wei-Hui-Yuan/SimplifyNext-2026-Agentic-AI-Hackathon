@@ -111,11 +111,21 @@ def load_student_context(state: CompassState) -> dict:
     student = db.get_student(state["student_id"])
     if student is None:
         raise ValueError(f"unknown student_id {state['student_id']!r} -- create it via POST /students first")
-    return {"profile": {
+    profile = {
         "year": student["year"], "cap": student["cap"],
         "modules_taken": student["modules_taken"], "interests": student["interests"],
         "goal": student["goal"],
-    }}
+    }
+    # The leverage/outreach graphs are invoked as separate requests AFTER the
+    # intake graph already generated a baseline trajectory (see app/server.py:
+    # POST /trajectories then POST /leverage-moves are two calls, not one
+    # invoke()). Without loading it back here, score_candidates'
+    # _trajectory_alignment and explain_leverage_moves' prompt would always
+    # see an empty trajectories list for those two graphs. intake/whatif/
+    # checkpoint immediately overwrite this with fresh trajectories anyway,
+    # so it's harmless there.
+    baseline = db.get_latest_trajectory_set(state["student_id"], is_whatif=False)
+    return {"profile": profile, "trajectories": baseline["paths"] if baseline else []}
 
 
 def score_candidates(state: CompassState) -> dict:
@@ -241,7 +251,7 @@ internships, the proposed paths should reflect a lighter external commitment loa
 
 
 def generate_trajectories(state: CompassState) -> dict:
-    planner = chat_model(temperature=0.2).with_structured_output(TrajectorySet)
+    planner = chat_model(temperature=0.2, max_tokens=3000).with_structured_output(TrajectorySet)
     prompt = json.dumps(state["profile"])
     if state.get("constraint_note"):
         prompt += f"\n\n{state['constraint_note']}"
@@ -274,7 +284,7 @@ def _display_title(record_type: str, payload: dict) -> str:
 
 
 def explain_leverage_moves(state: CompassState) -> dict:
-    planner = chat_model(temperature=0.2).with_structured_output(LeverageList)
+    planner = chat_model(temperature=0.2, max_tokens=3000).with_structured_output(LeverageList)
     prompt = json.dumps({
         "profile": state["profile"],
         "trajectories": state.get("trajectories", []),
@@ -306,7 +316,7 @@ def _find_record(record_type: str, record_id: str) -> dict | None:
 def draft_outreach_node(state: CompassState) -> dict:
     target = state["outreach_target"]
     target_record = _find_record(target["type"], target["id"]) or {}
-    planner = chat_model(temperature=0.3).with_structured_output(OutreachDraft)
+    planner = chat_model(temperature=0.3, max_tokens=1500).with_structured_output(OutreachDraft)
     prompt = json.dumps({"profile": state["profile"], "target": target_record})
     result = planner.invoke([SystemMessage(OUTREACH_SYSTEM_PROMPT), HumanMessage(prompt)])
     draft_row = db.insert_outreach_draft(

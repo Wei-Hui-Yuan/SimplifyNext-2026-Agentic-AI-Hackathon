@@ -10,6 +10,14 @@ live-demo fallback if the UI has issues on stage.
 import json
 import sys
 
+# Windows consoles default to cp1252, which can't encode characters an LLM
+# routinely produces (non-breaking hyphens, em-dashes, smart quotes) --
+# observed live: a real trajectory response crashed print() on U+2011.
+# Reconfigure stdout/stderr to UTF-8 before any output happens.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+
 from app import db
 from app.common import banner
 from app.graph import (
