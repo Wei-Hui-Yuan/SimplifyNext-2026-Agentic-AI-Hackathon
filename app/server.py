@@ -18,7 +18,6 @@ from app.graph import (
     build_outreach_graph,
     build_whatif_graph,
 )
-from app.tools import approve_outreach
 
 app = FastAPI(title="NUS Compass")
 
@@ -142,10 +141,16 @@ def create_outreach(student_id: str, body: OutreachIn):
 
 @app.post("/outreach/{draft_id}/approve")
 def approve(draft_id: int, body: ApproveIn):
-    result = approve_outreach.invoke({"draft_id": draft_id, "decision": body.decision})
-    if isinstance(result, str) and result.startswith("invalid decision"):
-        raise HTTPException(400, result)
-    return result
+    # Calls db.py directly rather than the approve_outreach @tool: that tool
+    # returns json.dumps(row) (a string, for eventual LLM/chat-mode
+    # consumption per tools.py's own docstring), and returning a string
+    # straight from a FastAPI route serializes as a JSON string literal, not
+    # a JSON object -- the frontend's draft.subject/body/status all read as
+    # undefined against that. Found live: Approve blanked out the whole
+    # panel instead of showing the approved status.
+    if body.decision not in ("approved", "rejected"):
+        raise HTTPException(400, f"invalid decision {body.decision!r}, expected 'approved' or 'rejected'")
+    return db.update_outreach_status(draft_id, body.decision)
 
 
 @app.post("/students/{student_id}/whatif")
