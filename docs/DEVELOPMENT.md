@@ -4,6 +4,23 @@ Technical companion to the [pitch](../README.md) and the
 [architecture doc](ARCHITECTURE.md). See `AGENTS.md` for contribution rules
 (branch per change, PR review before merging to `main`).
 
+## Fastest path to testing features: just a Groq key
+
+Everything except the LLM call itself has a zero-setup fallback:
+embeddings fall back from Bedrock Titan to a local TF-IDF vectorizer, and
+storage falls back from Supabase to a local SQLite file
+(`workspace/db/compass.sqlite3`, auto-created on first use) whenever
+`SUPABASE_URL`/`SUPABASE_KEY` aren't set. So to click through every feature
+with no AWS and no Supabase project, all you need is:
+
+```bash
+echo 'GROQ_API_KEY=gsk_...' > .env   # console.groq.com -> API Keys, free, no card
+```
+
+then skip straight to `uv run python demo_cli.py` or `run_server.py` below.
+AWS/Supabase only matter once you want real semantic embeddings and shared
+persistence instead of the local fallbacks.
+
 ## Quick start
 
 ```bash
@@ -71,13 +88,22 @@ by side.
 ## Status as of this branch
 
 Data pipeline, all 5 LangGraph graphs, and the FastAPI/React wiring are built
-and structurally verified (real NUSMods fetch, real prereq-graph parsing,
-embeddings via the TF-IDF fallback, all graphs compile, full request path
-tested through a live browser click). What still needs real credentials to
-exercise: actual LLM-generated trajectories/leverage moves/outreach drafts
-(needs `GROQ_API_KEY` or Bedrock), and Supabase persistence (needs a live
-project + `data_pipeline/init_supabase.sql` run once). See "Known
-limitations" in the PR this branch was opened from.
+and verified (real NUSMods fetch, real prereq-graph parsing, embeddings via
+the TF-IDF fallback, storage via the SQLite fallback — full `POST`/`GET
+/students` round trip confirmed working with zero external services, all
+graphs compile, full request path tested through a live browser click). The
+one thing that genuinely can't be tested without a key: real LLM-generated
+trajectories/leverage moves/outreach drafts, which needs `GROQ_API_KEY` (or
+AWS Bedrock). See "Known limitations" in the PR this branch was opened from.
+
+## Troubleshooting
+
+**Server seems to ignore code changes.** `run_server.py` runs with
+`reload=True`. In some sandboxed/containerized environments the
+watchfiles-based reloader's subprocess can end up serving stale code after an
+edit (observed once during development). If a change doesn't seem to take
+effect, kill every python process for this project and restart, or run
+without reload: `uv run python -c "import uvicorn; uvicorn.run('app.server:app', host='0.0.0.0', port=8000)"`.
 
 ## If port 8000 or 5173 is taken
 

@@ -49,3 +49,6 @@ ALUMNI_FILE = SYNTHETIC_DIR / "alumni_trajectories.json"
 EMBEDDINGS_FILE = PROCESSED_DIR / "embeddings.npy"
 EMBEDDINGS_META_FILE = PROCESSED_DIR / "embeddings_meta.json"
 PREREQ_GRAPH_FILE = PROCESSED_DIR / "prereq_graph.json"
+
+# Local fallback storage (app/db_sqlite.py) when SUPABASE_URL/KEY aren't set.
+SQLITE_DB_FILE = WORKSPACE / "db" / "compass.sqlite3"
