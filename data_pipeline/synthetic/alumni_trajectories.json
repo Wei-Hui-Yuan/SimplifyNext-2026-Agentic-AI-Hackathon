@@ -1,0 +1,82 @@
+[
+  {
+    "id": "alum_research_path_1",
+    "record_type": "alumni",
+    "name": "Alumnus A (fictional)",
+    "grad_year": 2023,
+    "path": "AI Research",
+    "story": "Took CS3244 and CS4243 in Year 2, started as an RA in an NLP lab in Year 2 Semester 2, co-authored one workshop paper by Year 3, and is now a PhD student at a fictional overseas university.",
+    "current_role": "PhD student, Machine Learning (fictional university)",
+    "advice": "Start the RA conversation a full semester before you think you're ready — labs plan their intake in advance."
+  },
+  {
+    "id": "alum_industry_path_1",
+    "record_type": "alumni",
+    "name": "Alumnus B (fictional)",
+    "grad_year": 2022,
+    "path": "AI Industry",
+    "story": "Did two ML-adjacent internships (data science, then applied ML), built three portfolio projects on GitHub, and joined a mid-size AI company as an ML engineer straight after graduating.",
+    "current_role": "ML Engineer at a fictional AI company",
+    "advice": "One deep project beats three shallow ones on a resume — interviewers ask follow-up questions and shallow projects fall apart fast."
+  },
+  {
+    "id": "alum_entrepreneurship_path_1",
+    "record_type": "alumni",
+    "name": "Alumnus C (fictional)",
+    "grad_year": 2021,
+    "path": "AI + Entrepreneurship",
+    "story": "Joined the Student Founder Track in Year 2, co-founded a small productivity-tools startup with a coursemate, and after graduating raised a small pre-seed round from a fictional local fund.",
+    "current_role": "Co-founder & CTO, early-stage startup (fictional)",
+    "advice": "Ship something small and real before you write a business plan. The plan changes; the muscle of shipping doesn't."
+  },
+  {
+    "id": "alum_research_path_2",
+    "record_type": "alumni",
+    "name": "Alumnus D (fictional)",
+    "grad_year": 2024,
+    "path": "AI Research",
+    "story": "Switched from an industry-track internship search to an RA position after realizing they preferred the open-ended problems in the lab; ended up applying to grad school a year later than planned.",
+    "current_role": "Incoming PhD student (fictional university)",
+    "advice": "It's fine to change paths mid-degree — the switch cost you one internship cycle, not the whole degree."
+  },
+  {
+    "id": "alum_industry_path_2",
+    "record_type": "alumni",
+    "name": "Alumnus E (fictional)",
+    "grad_year": 2023,
+    "path": "AI Industry",
+    "story": "Prioritized systems/infra modules over pure ML theory, interned on a platform team, and is now working on ML infrastructure rather than model-building directly.",
+    "current_role": "Platform Engineer, ML Infrastructure (fictional company)",
+    "advice": "'AI industry' isn't just modeling roles — infra and tooling roles are less competitive and just as central to shipping AI products."
+  },
+  {
+    "id": "alum_entrepreneurship_path_2",
+    "record_type": "alumni",
+    "name": "Alumnus F (fictional)",
+    "grad_year": 2020,
+    "path": "AI + Entrepreneurship",
+    "story": "Entered three case competitions and one hackathon in Year 1-2 before finding a co-founder at a pitch night; the eventual startup idea had nothing to do with any of those competitions.",
+    "current_role": "Founder, early-stage startup (fictional)",
+    "advice": "Competitions are for meeting people and building reps, not for finding your idea directly — don't be discouraged if the idea doesn't come from one."
+  },
+  {
+    "id": "alum_research_path_3",
+    "record_type": "alumni",
+    "name": "Alumnus G (fictional)",
+    "grad_year": 2022,
+    "path": "AI Research",
+    "story": "Kept CAP above 4.5 while doing a light RA load (5 hrs/week) for three semesters, which kept the option open for both grad school and a research-heavy industry role.",
+    "current_role": "Applied Scientist (fictional company)",
+    "advice": "You don't have to choose between CAP and research early on — a light, sustained RA commitment is easier to keep up than people assume."
+  },
+  {
+    "id": "alum_industry_path_3",
+    "record_type": "alumni",
+    "name": "Alumnus H (fictional)",
+    "grad_year": 2024,
+    "path": "AI Industry",
+    "story": "Took a CCA leadership role that had nothing to do with AI, and found it came up in every interview as the answer to 'tell me about a time you led something.'",
+    "current_role": "New-grad ML Engineer (fictional company)",
+    "advice": "Not every high-leverage move has to be technical — a leadership story is a gap most AI-focused students have."
+  }
+]

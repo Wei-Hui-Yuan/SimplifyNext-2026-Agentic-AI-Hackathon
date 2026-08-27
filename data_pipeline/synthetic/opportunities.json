@@ -1,0 +1,117 @@
+[
+  {
+    "id": "opp_ai_intern_meridian",
+    "record_type": "opportunity",
+    "title": "AI Engineering Intern",
+    "org": "Meridian Labs (fictional AI startup)",
+    "category": "internship",
+    "description": "Build evaluation tooling for a small applied-AI team shipping LLM features into a production product. Heavy on Python, light on research.",
+    "required_skills": ["python", "pytorch", "nlp", "software engineering"],
+    "deadline": "2026-09-15",
+    "eligibility": "Year 2+, completed at least one ML-related module"
+  },
+  {
+    "id": "opp_ra_alignment_lab",
+    "record_type": "opportunity",
+    "title": "Research Assistant — AI Alignment Lab",
+    "org": "NUS AI Alignment Lab (Prof. Farid Hassan)",
+    "category": "research_assistant",
+    "description": "Support ongoing interpretability experiments on transformer internals. Involves running experiments, not designing them, to start.",
+    "required_skills": ["pytorch", "python", "linear algebra"],
+    "deadline": "2026-09-05",
+    "eligibility": "Completed a deep learning module with a strong grade",
+    "related_professor_id": "prof_farid_hassan"
+  },
+  {
+    "id": "opp_quant_intern_harborstone",
+    "record_type": "opportunity",
+    "title": "Quantitative Research Intern",
+    "org": "Harborstone Capital (fictional quant fund)",
+    "category": "internship",
+    "description": "Backtest trading signals derived from alternative data using Python and SQL. Fast-paced, high rejection rate.",
+    "required_skills": ["python", "statistics", "sql"],
+    "deadline": "2026-10-01",
+    "eligibility": "Strong CAP, any year"
+  },
+  {
+    "id": "opp_swe_intern_northlane",
+    "record_type": "opportunity",
+    "title": "Software Engineer Intern, Backend",
+    "org": "Northlane (fictional B2B SaaS company)",
+    "category": "internship",
+    "description": "General backend engineering on a distributed systems team — not AI-specific, but a strong resume signal for infra-adjacent AI roles.",
+    "required_skills": ["java", "distributed systems", "sql"],
+    "deadline": "2026-09-20",
+    "eligibility": "Year 2+"
+  },
+  {
+    "id": "opp_ra_multilingual_lab",
+    "record_type": "opportunity",
+    "title": "Research Assistant — Multilingual AI Lab",
+    "org": "NUS Multilingual AI Lab (Prof. Meera Pillai)",
+    "category": "research_assistant",
+    "description": "Help build and evaluate an evaluation benchmark for a low-resource Southeast Asian language.",
+    "required_skills": ["nlp", "python", "a Southeast Asian language"],
+    "deadline": "2026-09-12",
+    "eligibility": "Any year, language skill matters more than CAP",
+    "related_professor_id": "prof_meera_pillai"
+  },
+  {
+    "id": "opp_startup_intern_seedling",
+    "record_type": "opportunity",
+    "title": "Founding Engineer Intern",
+    "org": "Seedling (fictional 4-person pre-seed startup)",
+    "category": "internship",
+    "description": "Ship product directly, no formal onboarding. High autonomy, high risk, strong story for the entrepreneurship path.",
+    "required_skills": ["full-stack", "product sense", "fast learner"],
+    "deadline": "rolling",
+    "eligibility": "Any year, portfolio matters more than transcript"
+  },
+  {
+    "id": "opp_ra_systems_ml_lab",
+    "record_type": "opportunity",
+    "title": "Research Assistant — Systems for ML Lab",
+    "org": "NUS Systems for ML Lab (Prof. Daniel Ong)",
+    "category": "research_assistant",
+    "description": "Optimize a training pipeline's data loading throughput. Systems-flavored, not model-flavored.",
+    "required_skills": ["systems programming", "python", "c++"],
+    "deadline": "2026-09-18",
+    "eligibility": "Completed a systems or architecture module",
+    "related_professor_id": "prof_daniel_ong"
+  },
+  {
+    "id": "opp_data_intern_civicgrid",
+    "record_type": "opportunity",
+    "title": "Data Science Intern",
+    "org": "CivicGrid (fictional civic-tech nonprofit)",
+    "category": "internship",
+    "description": "Analyze public transport usage data to recommend service changes. Good for a portfolio project with real-world framing.",
+    "required_skills": ["python", "pandas", "data visualization"],
+    "deadline": "2026-09-25",
+    "eligibility": "Any year"
+  },
+  {
+    "id": "opp_ra_causal_inference",
+    "record_type": "opportunity",
+    "title": "Research Assistant — Causal Inference Group",
+    "org": "NUS Causal Inference Group (Prof. Aisha Rahman)",
+    "category": "research_assistant",
+    "description": "Clean and analyze a de-identified healthcare dataset for a causal inference project on treatment effects.",
+    "required_skills": ["statistics", "r or python", "attention to detail"],
+    "deadline": "2026-09-10",
+    "eligibility": "Completed an introductory statistics module",
+    "related_professor_id": "prof_aisha_rahman"
+  },
+  {
+    "id": "opp_incubator_iceo_track",
+    "record_type": "opportunity",
+    "title": "Student Founder Track — Venture Studio",
+    "org": "NUS Technology Venture Studio (Prof. Jonathan Teo)",
+    "category": "incubator",
+    "description": "A semester-long structured track for student teams turning a rough idea into a pitchable prototype, with mentorship.",
+    "required_skills": ["a startup idea", "a small team", "willingness to pitch"],
+    "deadline": "2026-09-30",
+    "eligibility": "Any year, team of 2-4",
+    "related_professor_id": "prof_jonathan_teo"
+  }
+]
