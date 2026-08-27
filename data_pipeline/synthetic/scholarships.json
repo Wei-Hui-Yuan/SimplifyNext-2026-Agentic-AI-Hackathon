@@ -1,0 +1,64 @@
+[
+  {
+    "id": "sch_ai_merit",
+    "record_type": "scholarship",
+    "title": "AI Merit Scholarship",
+    "provider": "NUS AI Institute (fictional)",
+    "description": "Awarded to students with a strong academic record and a demonstrated AI-related project or research interest.",
+    "eligibility": {"min_cap": 4.0, "years": [2, 3, 4]},
+    "deadline": "2026-11-01",
+    "value": "SGD 5,000/year"
+  },
+  {
+    "id": "sch_womxn_in_tech",
+    "record_type": "scholarship",
+    "title": "Women in Computing Scholarship",
+    "provider": "TechForward Foundation (fictional)",
+    "description": "Supports women pursuing computing degrees with an interest in AI or systems research.",
+    "eligibility": {"min_cap": 3.5, "years": [1, 2, 3, 4]},
+    "deadline": "2026-10-20",
+    "value": "SGD 4,000/year"
+  },
+  {
+    "id": "sch_entrepreneurship_seed",
+    "record_type": "scholarship",
+    "title": "Student Entrepreneur Seed Grant",
+    "provider": "NUS Technology Venture Studio (Prof. Jonathan Teo)",
+    "description": "Small non-dilutive grant for student teams building an early-stage product prototype.",
+    "eligibility": {"team_of": 2, "years": [1, 2, 3, 4]},
+    "deadline": "2026-09-30",
+    "value": "SGD 3,000 one-time",
+    "related_professor_id": "prof_jonathan_teo"
+  },
+  {
+    "id": "sch_grad_research_track",
+    "record_type": "scholarship",
+    "title": "Undergraduate Research Track Stipend",
+    "provider": "NUS Faculty of Computing (fictional)",
+    "description": "Stipend for undergraduates doing a sustained RA commitment (2+ semesters) with a faculty lab.",
+    "eligibility": {"min_cap": 4.2, "years": [2, 3]},
+    "deadline": "2026-09-15",
+    "value": "SGD 600/month during the RA term"
+  },
+  {
+    "id": "sch_regional_language_tech",
+    "record_type": "scholarship",
+    "title": "Regional Language Technology Fellowship",
+    "provider": "NUS Multilingual AI Lab (Prof. Meera Pillai)",
+    "description": "Supports students working on NLP for under-resourced Southeast Asian languages.",
+    "eligibility": {"language_skill": true, "years": [1, 2, 3, 4]},
+    "deadline": "2026-10-05",
+    "value": "SGD 2,500 one-time",
+    "related_professor_id": "prof_meera_pillai"
+  },
+  {
+    "id": "sch_general_merit",
+    "record_type": "scholarship",
+    "title": "Faculty General Merit Award",
+    "provider": "NUS Faculty of Computing (fictional)",
+    "description": "Broad merit-based award, not tied to a specific research area.",
+    "eligibility": {"min_cap": 4.5, "years": [1, 2, 3, 4]},
+    "deadline": "2026-11-10",
+    "value": "SGD 2,000 one-time"
+  }
+]

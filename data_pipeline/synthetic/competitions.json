@@ -1,0 +1,85 @@
+[
+  {
+    "id": "comp_nus_ai_hackathon",
+    "record_type": "competition",
+    "title": "NUS AI Hackathon 2026",
+    "organizer": "NUS Computing Club (fictional)",
+    "description": "48-hour build sprint on an applied AI theme, judged by a mix of faculty and industry mentors.",
+    "skills_tested": ["machine learning", "rapid prototyping", "teamwork"],
+    "deadline": "2026-10-01",
+    "team_based": true
+  },
+  {
+    "id": "comp_national_case_challenge",
+    "record_type": "competition",
+    "title": "National Tech Strategy Case Challenge",
+    "organizer": "Singapore Business Case Federation (fictional)",
+    "description": "Teams solve a real-world tech-strategy case for a sponsoring company over two weeks.",
+    "skills_tested": ["business analysis", "presentation", "strategy"],
+    "deadline": "2026-09-22",
+    "team_based": true
+  },
+  {
+    "id": "comp_kaggle_style_challenge",
+    "record_type": "competition",
+    "title": "SEA Data Science Open",
+    "organizer": "Regional university consortium (fictional)",
+    "description": "A regional applied-ML leaderboard competition on a healthcare prediction task.",
+    "skills_tested": ["machine learning", "feature engineering", "python"],
+    "deadline": "2026-11-05",
+    "team_based": false
+  },
+  {
+    "id": "comp_startup_pitch_night",
+    "record_type": "competition",
+    "title": "NUS Enterprise Pitch Night",
+    "organizer": "NUS Technology Venture Studio (Prof. Jonathan Teo)",
+    "description": "5-minute pitches to a panel of alumni founders and investors, for teams with an early-stage idea.",
+    "skills_tested": ["pitching", "product thinking", "storytelling"],
+    "deadline": "2026-10-15",
+    "team_based": true,
+    "related_professor_id": "prof_jonathan_teo"
+  },
+  {
+    "id": "comp_robotics_challenge",
+    "record_type": "competition",
+    "title": "Inter-University Robotics Challenge",
+    "organizer": "Regional engineering consortium (fictional)",
+    "description": "Teams build and program a robot to complete a warehouse-navigation task under time pressure.",
+    "skills_tested": ["robotics", "reinforcement learning", "systems integration"],
+    "deadline": "2026-11-20",
+    "team_based": true
+  },
+  {
+    "id": "comp_paper_reproduction_challenge",
+    "record_type": "competition",
+    "title": "Reproducibility Challenge — AI Track",
+    "organizer": "NUS AI Alignment Lab (Prof. Farid Hassan)",
+    "description": "Students reproduce a recent AI safety paper's results and write up discrepancies found.",
+    "skills_tested": ["research", "pytorch", "technical writing"],
+    "deadline": "2026-10-10",
+    "team_based": false,
+    "related_professor_id": "prof_farid_hassan"
+  },
+  {
+    "id": "comp_civic_data_challenge",
+    "record_type": "competition",
+    "title": "Civic Data Challenge",
+    "organizer": "CivicGrid (fictional civic-tech nonprofit)",
+    "description": "Open data challenge on public infrastructure datasets, judged on real-world usefulness of the analysis.",
+    "skills_tested": ["data analysis", "public communication", "python"],
+    "deadline": "2026-09-28",
+    "team_based": true
+  },
+  {
+    "id": "comp_language_tech_challenge",
+    "record_type": "competition",
+    "title": "Southeast Asian Language Tech Challenge",
+    "organizer": "NUS Multilingual AI Lab (Prof. Meera Pillai)",
+    "description": "Build a small NLP tool for an under-resourced Southeast Asian language and present it to a language-tech panel.",
+    "skills_tested": ["nlp", "a regional language", "product framing"],
+    "deadline": "2026-10-25",
+    "team_based": true,
+    "related_professor_id": "prof_meera_pillai"
+  }
+]
