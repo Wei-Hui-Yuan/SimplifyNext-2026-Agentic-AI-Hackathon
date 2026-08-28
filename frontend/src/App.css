@@ -34,6 +34,7 @@
   color: var(--text);
   cursor: pointer;
   border-radius: 0;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 .tab:hover:not(:disabled) {
@@ -52,9 +53,9 @@
 }
 
 .error-banner {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fca5a5;
+  background: var(--color-rejected-bg);
+  color: var(--color-rejected);
+  border: 1px solid var(--color-rejected);
   border-radius: 8px;
   padding: 10px 14px;
   margin-bottom: 16px;
@@ -62,13 +63,18 @@
 }
 
 .card {
-  background: var(--bg);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: var(--shadow);
   padding: 20px 22px;
   margin-bottom: 16px;
   text-align: left;
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover);
 }
 
 section h2 {
@@ -105,8 +111,14 @@ input, textarea {
   padding: 8px 10px;
   border: 1px solid var(--border);
   border-radius: 6px;
-  background: var(--bg);
+  background: var(--surface);
   color: var(--text-h);
+  transition: border-color 0.15s ease;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 button {
@@ -117,12 +129,17 @@ button {
   border-radius: 8px;
   border: 1px solid var(--accent);
   background: var(--accent);
-  color: white;
+  color: var(--surface);
   cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
 }
 
 button:hover:not(:disabled) {
-  opacity: 0.9;
+  opacity: 0.88;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 button:disabled {
@@ -200,14 +217,14 @@ button.secondary {
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: var(--color-apply-bg);
+  color: var(--color-apply);
 }
 
-.move-skip .move-type-badge {
-  background: #fef3c7;
-  color: #92400e;
-}
+.move-module .move-type-badge { background: var(--color-module-bg); color: var(--color-module); }
+.move-meeting .move-type-badge { background: var(--color-meeting-bg); color: var(--color-meeting); }
+.move-event .move-type-badge { background: var(--color-event-bg); color: var(--color-event); }
+.move-skip .move-type-badge { background: var(--color-skip-bg); color: var(--color-skip); }
 
 .deadline {
   font-size: 12px;
@@ -281,9 +298,9 @@ button.secondary {
   border-radius: 999px;
 }
 
-.status-draft { background: var(--accent-bg); color: var(--accent); }
-.status-approved { background: #d1fae5; color: #065f46; }
-.status-rejected { background: #fee2e2; color: #991b1b; }
+.status-draft { background: var(--color-draft-bg); color: var(--color-draft); }
+.status-approved { background: var(--color-approved-bg); color: var(--color-approved); }
+.status-rejected { background: var(--color-rejected-bg); color: var(--color-rejected); }
 
 .actions {
   display: flex;
