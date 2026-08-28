@@ -1,18 +1,47 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
+  /* Warm cream base + a deep forest-green primary accent, terracotta as a
+     secondary/warm accent. Every semantic color below (module/meeting/apply/
+     skip/event, draft/approved/rejected) is drawn from the same warm family
+     rather than generic web red/green/blue, so the palette reads as one
+     considered system instead of default browser colors. */
+  --text: #5a4f3f;
+  --text-h: #2b2418;
+  --bg: #faf5ea;
+  --surface: #fffcf5;
+  --border: #e4d9c2;
+  --code-bg: #f0e6d2;
+  --accent: #2f6b4f;
+  --accent-bg: rgba(47, 107, 79, 0.1);
+  --accent-border: rgba(47, 107, 79, 0.4);
+  --accent-2: #b5562f;
+  --accent-2-bg: rgba(181, 86, 47, 0.1);
+  --social-bg: rgba(240, 230, 210, 0.6);
   --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    rgba(60, 45, 20, 0.08) 0 10px 15px -3px, rgba(60, 45, 20, 0.05) 0 4px 6px -2px;
+  --shadow-hover:
+    rgba(60, 45, 20, 0.14) 0 14px 20px -5px, rgba(60, 45, 20, 0.08) 0 6px 8px -3px;
+
+  /* Per-feature semantic colors -- kept out of App.css's hardcoded hex so
+     the whole palette lives in one place. */
+  --color-module: #4c6b8a;
+  --color-module-bg: rgba(76, 107, 138, 0.1);
+  --color-meeting: var(--accent-2);
+  --color-meeting-bg: var(--accent-2-bg);
+  --color-apply: var(--accent);
+  --color-apply-bg: var(--accent-bg);
+  --color-skip: #a5760f;
+  --color-skip-bg: rgba(165, 118, 15, 0.12);
+  --color-event: #7a4f7a;
+  --color-event-bg: rgba(122, 79, 122, 0.1);
+  --color-approved: var(--accent);
+  --color-approved-bg: var(--accent-bg);
+  --color-rejected: #a23b32;
+  --color-rejected-bg: rgba(162, 59, 50, 0.1);
+  --color-draft: #8c8064;
+  --color-draft-bg: rgba(140, 128, 100, 0.12);
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
   --mono: ui-monospace, Consolas, monospace;
 
   font: 18px/145% var(--sans);
@@ -32,17 +61,33 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
+    --text: #c9bfa8;
+    --text-h: #f3ebd9;
+    --bg: #211c14;
+    --surface: #2a241a;
+    --border: #3d3527;
+    --code-bg: #362f22;
+    --accent: #6fbf95;
+    --accent-bg: rgba(111, 191, 149, 0.15);
+    --accent-border: rgba(111, 191, 149, 0.4);
+    --accent-2: #e08a5b;
+    --accent-2-bg: rgba(224, 138, 91, 0.15);
+    --social-bg: rgba(61, 53, 39, 0.5);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+    --shadow-hover:
+      rgba(0, 0, 0, 0.5) 0 14px 20px -5px, rgba(0, 0, 0, 0.3) 0 6px 8px -3px;
+
+    --color-module: #8fb2d6;
+    --color-module-bg: rgba(143, 178, 214, 0.15);
+    --color-skip: #e0b94f;
+    --color-skip-bg: rgba(224, 185, 79, 0.15);
+    --color-event: #c99ac9;
+    --color-event-bg: rgba(201, 154, 201, 0.15);
+    --color-rejected: #e08078;
+    --color-rejected-bg: rgba(224, 128, 120, 0.15);
+    --color-draft: #a79b7e;
+    --color-draft-bg: rgba(167, 155, 126, 0.15);
   }
 
   #social .button-icon {
@@ -64,7 +109,9 @@ body {
 }
 
 h1,
-h2 {
+h2,
+h3,
+h4 {
   font-family: var(--heading);
   font-weight: 500;
   color: var(--text-h);
