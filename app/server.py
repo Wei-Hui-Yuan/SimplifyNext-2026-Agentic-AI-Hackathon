@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from app import db
+from app import db, planner
 from app.graph import (
     build_checkpoint_graph,
     build_intake_graph,
@@ -82,6 +82,10 @@ class ActionIn(BaseModel):
     action_type: str
     ref_id: str = ""
     detail: dict = {}
+
+
+class WorkloadIn(BaseModel):
+    module_codes: list[str]
 
 
 def _base_state(student_id: str, mode: str) -> dict:
@@ -178,3 +182,35 @@ def create_action(student_id: str, body: ActionIn):
     """Lets the demo 'fast-forward' time by logging actions directly,
     without waiting for a real second visit."""
     return db.log_action(student_id, body.action_type, body.ref_id, body.detail)
+
+
+# ---------------------------------------------------------------------------
+# Planner: pathfinding, unlock analysis, workload feasibility. All three are
+# deterministic (no LLM call), so they call app/planner.py directly rather
+# than going through a compiled graph -- same reasoning as /actions above.
+# ---------------------------------------------------------------------------
+
+@app.get("/planner/path/{student_id}/{module_code}")
+def path_to_module(student_id: str, module_code: str):
+    student = db.get_student(student_id)
+    if student is None:
+        raise HTTPException(404, "student not found")
+    return planner.find_path_to_module(
+        module_code, student["modules_taken"], current_year=student["year"],
+    )
+
+
+@app.get("/planner/unlocks/{module_code}")
+def unlocks_for_module(module_code: str, student_id: str | None = None):
+    trajectories = []
+    if student_id:
+        ts = db.get_latest_trajectory_set(student_id, is_whatif=False)
+        if ts:
+            trajectories = ts["paths"]
+    step_texts = [s for path in trajectories for s in path.get("steps", [])]
+    return planner.unlock_analysis(module_code, step_texts)
+
+
+@app.post("/planner/workload")
+def workload_check(body: WorkloadIn):
+    return planner.workload_for_modules(body.module_codes)
