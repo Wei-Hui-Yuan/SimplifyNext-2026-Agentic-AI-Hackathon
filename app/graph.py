@@ -23,7 +23,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import add_messages
 
-from app import db, retrieval
+from app import db, planner, retrieval
 from app.common import chat_model
 from app.config import PREREQ_GRAPH_FILE
 from app.schemas import LeverageList, OutreachDraft, TrajectorySet
@@ -147,15 +147,25 @@ def score_candidates(state: CompassState) -> dict:
     for c in pool:
         similarity = c["score"]
         trajectory_alignment = _trajectory_alignment(c["text"], trajectories)
+        is_module = c["record_type"] == "module"
+        # planner.trajectory_aware_unlock_score replaces the old flat
+        # _unlock_count_normalized (raw out-degree only) -- it counts how
+        # many of a module's downstream unlocks are actually relevant to the
+        # student's chosen trajectory, falling back to the old raw-count
+        # behavior when there's no trajectory context yet.
         unlock_count_normalized = (
-            _unlock_count_normalized(c["id"]) if c["record_type"] == "module" else 0.0
+            planner.trajectory_aware_unlock_score(c["id"], trajectories) if is_module else 0.0
         )
         urgency_bonus = _urgency_bonus(c["payload"].get("deadline"))
         leverage_score = (
             0.4 * similarity + 0.3 * trajectory_alignment
             + 0.2 * unlock_count_normalized + 0.1 * urgency_bonus
         )
-        scored.append({**c, "leverage_score": round(leverage_score, 4)})
+        # Real NUSMods workload hours, previously fetched and never read --
+        # lets downstream consumers (explain_leverage_moves, the frontend)
+        # back the "don't overcommit" promise with an actual number.
+        extra = {"workload_hours": planner.module_workload_hours(c["id"])} if is_module else {}
+        scored.append({**c, **extra, "leverage_score": round(leverage_score, 4)})
 
     scored.sort(key=lambda c: c["leverage_score"], reverse=True)
     return {"candidate_pool": scored[:20]}
