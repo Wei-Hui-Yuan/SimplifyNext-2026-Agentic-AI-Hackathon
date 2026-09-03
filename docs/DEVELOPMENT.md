@@ -45,12 +45,23 @@ uv run python run_pipeline.py
 # 3. Terminal walkthrough -- proves the graphs + DB work before touching the UI
 uv run python demo_cli.py
 
-# 4. Backend
-uv run python run_server.py          # http://localhost:8000, docs at /docs
+# 4 + 5. Backend + frontend together, one command, one terminal:
+cd frontend && npm install && cd ..
+uv run python run_dev.py             # backend on :8000 (docs at /docs), frontend on :5173
 
-# 5. Frontend (separate terminal)
-cd frontend && npm install && npm run dev   # http://localhost:5173
+#   or run them separately in two terminals, if you want independent control:
+#   uv run python run_server.py
+#   cd frontend && npm run dev
 ```
+
+`run_dev.py` starts both as one process group and prefixes their interleaved
+output with `[backend]`/`[frontend]`. If either one dies on its own -- this
+has happened during development, both the backend's `--reload` watcher and
+the Vite dev server have independently exited without warning on Windows --
+it stops the other one too instead of leaving you with a silently half-broken
+app. `Ctrl+C` stops both cleanly. The backend it starts does NOT use
+`--reload` (see "Troubleshooting" below); restart `run_dev.py` after backend
+edits.
 
 A `.claude/launch.json` is included so `compass-backend`/`compass-frontend`
 can be started from Claude Code's preview tooling directly, if you're using it.
