@@ -63,9 +63,6 @@ app. `Ctrl+C` stops both cleanly. The backend it starts does NOT use
 `--reload` (see "Troubleshooting" below); restart `run_dev.py` after backend
 edits.
 
-A `.claude/launch.json` is included so `compass-backend`/`compass-frontend`
-can be started from Claude Code's preview tooling directly, if you're using it.
-
 ## What's real vs synthetic
 
 - **Real**: the NUSMods module catalog (`data_pipeline/fetch_nusmods.py`),
