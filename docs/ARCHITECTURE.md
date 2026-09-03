@@ -20,13 +20,16 @@ This code was originally scaffolded inside a separate training-curriculum repo (
 ├── .env / .env.example
 ├── run_pipeline.py             # runs data_pipeline/*.py in order
 ├── run_server.py                # uv run python run_server.py -> uvicorn on :8000
+├── run_dev.py                    # starts backend (no --reload) + frontend together, one process group
 ├── demo_cli.py                  # terminal fallback: invokes compiled graphs directly, no HTTP/UI needed
 ├── app/
-│   ├── common.py                # self-contained chat_model()/PROVIDER/.env loader
+│   ├── common.py                # self-contained chat_model()/PROVIDER/.env loader; invoke_structured() retries
+│   │                             # Groq's tool-name flakiness and rate limits (see "Groq call hardening" below)
 │   ├── config.py                 # ACADEMIC_YEAR, dept allowlist, WORKSPACE = Path(__file__).resolve().parent.parent / "workspace"
 │   ├── schemas.py                # Pydantic: TrajectoryPath, TrajectorySet, LeverageMove, LeverageList, OutreachDraft
 │   ├── db.py                     # Supabase client wrapper, no ORM
 │   ├── retrieval.py              # load_index / embed_query / cosine_topk
+│   ├── planner.py                # prereq-tree pathfinding, unlock analysis, workload feasibility (see below)
 │   ├── tools.py                  # @tool surface
 │   ├── graph.py                  # CompassState + 5 linear StateGraphs + node functions
 │   └── server.py                 # FastAPI app + CORS, thin wrappers around graph.invoke()
@@ -136,6 +139,20 @@ Five compiled graphs (all verified to compile with correct node wiring):
 - `build_whatif_graph()`: `load_student_context -> apply_whatif_constraint -> generate_trajectories -> score_candidates -> explain_leverage_moves -> persist_result` (writes a **new** `trajectory_sets` row with `is_whatif=true` — never overwrites baseline)
 - `build_checkpoint_graph()`: `load_student_context -> compute_alignment_delta -> score_candidates -> explain_leverage_moves -> persist_result`
 
+## Planning engine (`app/planner.py`)
+
+The flattened prereq graph (`workspace/processed/prereq_graph.json`) is enough for unlock counting, but not for pathfinding — it loses the real AND/OR structure of `prereqTree` (e.g. CS2103 needs *one of* 3 intro-programming variants *and one of* 5 CS2040 variants, not all 8). `planner.py` reads `prereqTree` directly from the raw cached module JSON for anything that needs real satisfiability:
+
+- `find_path_to_module(target, modules_taken, ...)` — an AND/OR-correct ordered plan to a target module, bucketed into semesters via topological sort (Kahn's algorithm).
+- `unlock_analysis()` / `trajectory_aware_unlock_score()` — how many (and which) downstream modules a candidate unlocks, weighted by relevance to the student's actual chosen trajectory, not just raw out-degree.
+- `module_workload_hours()` / `workload_for_modules()` — sums NUSMods' real per-module `workload` array so the "don't overcommit" feature is backed by an actual number instead of vibes.
+
+`score_candidates` (in `app/graph.py`) calls `trajectory_aware_unlock_score` and `module_workload_hours` in place of the earlier flat scalar. Exposed read-only (no LLM call, so no latency/cost) via `GET /planner/path/{student_id}/{module_code}`, `GET /planner/unlocks/{module_code}`, `POST /planner/workload`.
+
+## Groq call hardening (`app/common.py`)
+
+Two real failure modes turned up under live testing, both now retried by `invoke_structured()` (used by all three `with_structured_output(...)` model-calling nodes): a `BadRequestError` when the model emits a slightly-mangled tool name for structured output (immediate retry — sampling noise, not deterministic), and a `RateLimitError` from the free tier's 8000 TPM cap surviving Groq's own built-in retries (waits for the server's actual requested delay, read from the `retry-after`/`retry-after-ms` header, before retrying).
+
 ## Tools (`app/tools.py`)
 
 Most of this surface is *not* on the core demo's hot path (the 5 graphs call node logic directly) — it exists for (a) utilities the deterministic nodes call, and (b) an optional future "chat with Compass" mode via `create_agent(tools=[...])`.
@@ -146,7 +163,7 @@ Most of this surface is *not* on the core demo's hot path (the 5 graphs call nod
 
 CORS enabled for the Vite dev origin (`http://localhost:5173`). A global `RuntimeError` handler returns a clean 503 with the underlying friendly message (missing `GROQ_API_KEY`/AWS creds/Supabase config) instead of letting a missing-credential error take down the process — verified live.
 
-Endpoints: `POST /students`, `GET /students/{id}`, `POST /students/{id}/trajectories`, `POST /students/{id}/leverage-moves`, `POST /students/{id}/outreach`, `POST /outreach/{draft_id}/approve`, `POST /students/{id}/whatif`, `POST /students/{id}/checkpoint`, `POST /students/{id}/actions` (lets the demo "fast-forward" time without waiting for a real second visit).
+Endpoints: `POST /students`, `GET /students/{id}`, `POST /students/{id}/trajectories`, `POST /students/{id}/leverage-moves`, `POST /students/{id}/outreach`, `POST /outreach/{draft_id}/approve`, `POST /students/{id}/whatif`, `POST /students/{id}/checkpoint`, `POST /students/{id}/actions` (lets the demo "fast-forward" time without waiting for a real second visit), plus the planner's `GET /planner/path/{student_id}/{module_code}`, `GET /planner/unlocks/{module_code}`, `POST /planner/workload` (see "Planning engine" above — no LLM call, so no latency/cost on these three).
 
 ## React frontend (`frontend/`)
 
@@ -154,6 +171,8 @@ Vite + React, plain `fetch` in `api.js`. Tab-based `App.jsx` — Intake, Traject
 
 Optional polish: `npm run build`, serve `frontend/dist/` from FastAPI via `StaticFiles` so a demo runs as one process instead of two dev servers.
 
-## Known limitations / what's untested
+## Status
 
-Everything above is verified (real NUSMods data, real prereq-graph parsing, the TF-IDF embedding fallback end-to-end, the SQLite storage fallback's full function surface including a real `POST`/`GET /students` round trip through the running server, all 5 graphs compiling, the full frontend-to-backend request path). **Not yet exercised**: actual LLM-generated trajectories/leverage moves/outreach drafts, which needs a live `GROQ_API_KEY` (or AWS Bedrock) — this is the one thing with no fallback, since it's the actual product. Once `.env` has a Groq key, `demo_cli.py` walks the full narrative — trajectories → leverage moves → outreach draft → approve → log actions → checkpoint → what-if — end to end in the terminal against the local SQLite fallback, no AWS or Supabase setup required, which is the fastest way to confirm real model output before trusting the UI.
+Everything in this document is verified against real data, including live LLM generation: real NUSMods data, real prereq-graph parsing (both the flattened graph and the AND/OR-correct `prereqTree` path used by the planner), the TF-IDF embedding fallback end-to-end, the SQLite storage fallback's full function surface, all 5 graphs compiling and running, the full frontend-to-backend request path in a live browser, and real Groq-generated trajectories/leverage moves/outreach drafts (confirmed via live response metadata — token usage, `system_fingerprint`, `queue_time` — not a mock, and confirmed to produce genuinely different, input-specific output across distinct student profiles, not canned text). `demo_cli.py` walks the full narrative end to end in the terminal — trajectories → leverage moves → outreach draft → approve → log actions → checkpoint → what-if — against the local SQLite fallback, no AWS or Supabase setup required.
+
+**Known limitations**: the LLM path has no fallback by design (a missing `GROQ_API_KEY` is a clean 503, not degraded output, since generation is the actual product). Groq's free tier's small per-minute token budget (8000 TPM) can still be hit under heavy back-to-back use even with the retry hardening in `app/common.py` — see "Groq call hardening" above. No automated test suite yet; correctness has been established through live verification (real API calls, real data) rather than unit tests.
