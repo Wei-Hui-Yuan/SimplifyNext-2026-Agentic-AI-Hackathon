@@ -162,6 +162,57 @@ def chat_model(temperature: float = 0.0, **kwargs):
     raise RuntimeError(f"Unknown PROVIDER {PROVIDER!r}. Use 'groq' or 'bedrock'.")
 
 
+def _retry_after_seconds(exc, default: float) -> float:
+    """Groq's own SDK already retries a 429 internally (twice, honoring this
+    same header) -- if that still wasn't enough (observed live: a full
+    demo_cli.py run tripped the free tier's 8000 TPM cap even after the SDK's
+    built-in retries), wait for what the server actually asked for before
+    trying again ourselves. Capped at 60s so a stray/huge header value can't
+    hang a request indefinitely."""
+    headers = getattr(getattr(exc, "response", None), "headers", None)
+    if headers is not None:
+        for key, unit in (("retry-after-ms", 1000.0), ("retry-after", 1.0)):
+            value = headers.get(key)
+            if value is not None:
+                try:
+                    return min(float(value) / unit, 60.0)
+                except ValueError:
+                    pass
+    return default
+
+
+def invoke_structured(structured_model, messages, max_attempts: int = 3):
+    """.invoke() for a chat_model().with_structured_output(...) pipeline, with
+    retries on two known Groq failure modes:
+
+    - BadRequestError: the model occasionally emits a tool call whose name
+      doesn't exactly match the one it was just given (observed live:
+      'leverageList' vs the registered 'leverage_list'), which Groq's API
+      rejects outright with a 400 before LangChain ever gets a response to
+      parse. It's sampling noise, not a deterministic bug -- a fresh sample
+      (i.e. an immediate retry) reliably goes through.
+    - RateLimitError: the free tier's tokens-per-minute budget is small
+      (8000 TPM) and several real LLM calls landing close together can trip
+      it even after the SDK's own built-in retries are exhausted -- wait for
+      the server's actual requested delay, then try again.
+    """
+    import time
+
+    from groq import BadRequestError, RateLimitError
+
+    last_exc = None
+    for attempt in range(max_attempts):
+        try:
+            return structured_model.invoke(messages)
+        except BadRequestError as exc:
+            last_exc = exc
+        except RateLimitError as exc:
+            last_exc = exc
+            if attempt < max_attempts - 1:
+                time.sleep(_retry_after_seconds(exc, default=10.0))
+    raise last_exc
+
+
 def report_usage(label: str, usage) -> None:
     if usage is None:
         return

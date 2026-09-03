@@ -24,7 +24,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import add_messages
 
 from app import db, planner, retrieval
-from app.common import chat_model
+from app.common import chat_model, invoke_structured
 from app.config import PREREQ_GRAPH_FILE
 from app.schemas import LeverageList, OutreachDraft, TrajectorySet
 
@@ -265,7 +265,7 @@ def generate_trajectories(state: CompassState) -> dict:
     prompt = json.dumps(state["profile"])
     if state.get("constraint_note"):
         prompt += f"\n\n{state['constraint_note']}"
-    result = planner.invoke([SystemMessage(TRAJECTORY_SYSTEM_PROMPT), HumanMessage(prompt)])
+    result = invoke_structured(planner, [SystemMessage(TRAJECTORY_SYSTEM_PROMPT), HumanMessage(prompt)])
     return {"trajectories": [p.model_dump() for p in result.paths]}
 
 
@@ -305,7 +305,7 @@ def explain_leverage_moves(state: CompassState) -> dict:
             for c in state.get("candidate_pool", [])
         ],
     })
-    result = planner.invoke([SystemMessage(LEVERAGE_SYSTEM_PROMPT), HumanMessage(prompt)])
+    result = invoke_structured(planner, [SystemMessage(LEVERAGE_SYSTEM_PROMPT), HumanMessage(prompt)])
     return {"leverage_moves": [m.model_dump() for m in result.moves]}
 
 
@@ -328,7 +328,7 @@ def draft_outreach_node(state: CompassState) -> dict:
     target_record = _find_record(target["type"], target["id"]) or {}
     planner = chat_model(temperature=0.3, max_tokens=1500).with_structured_output(OutreachDraft)
     prompt = json.dumps({"profile": state["profile"], "target": target_record})
-    result = planner.invoke([SystemMessage(OUTREACH_SYSTEM_PROMPT), HumanMessage(prompt)])
+    result = invoke_structured(planner, [SystemMessage(OUTREACH_SYSTEM_PROMPT), HumanMessage(prompt)])
     draft_row = db.insert_outreach_draft(
         state["student_id"], target["type"], target["id"], result.subject, result.body
     )
